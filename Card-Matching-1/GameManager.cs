@@ -122,7 +122,7 @@ public class GameManager
             {
                 if (0 < r && r < _board.Width + 1 && 0 < c && c < _board.Height + 1)
                 {
-                    if (_board.GetBoardState(r, c) == "**")
+                    if (_board.GetCardState(r, c) == "**")
                     {
                         _board.ChooseNum(r, c);
                         row = r;
@@ -151,20 +151,20 @@ public class GameManager
 
     public void CheckPair(int row1, int col1, int row2, int col2)
     {
-        if (_board.NumBoard[row1,col1] == _board.NumBoard[row2, col2])
+        if (_board.CardBoard[row1,col1].Num == _board.CardBoard[row2, col2].Num)
         {
             Console.WriteLine("짝을 찾았습니다!");
-            _board.StringBoard[row1, col1] = _board.NumBoard[row1,col1].ToString();
-            _board.StringBoard[row2, col2] = _board.NumBoard[row2, col2].ToString();
+            _board.CardBoard[row1, col1].ApplyState("Pair");
+            _board.CardBoard[row2, col2].ApplyState("Pair");
             _tryNum++;
             _findPair++;
         }
         else
         {
-            _board.StringBoard[row1, col1] = "**";
-            _board.StringBoard[row2, col2] = "**";
-            _tryNum++;
             Console.WriteLine("짝이 맞지 않습니다!");
+            _board.CardBoard[row1, col1].ApplyState("Unknown");
+            _board.CardBoard[row2, col2].ApplyState("Unknown");
+            _tryNum++;
         }
         Thread.Sleep(1500);
         Console.Clear();

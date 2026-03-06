@@ -7,8 +7,7 @@ public class Board
     public int Width { get; private set; }
     public int Height { get; private set; }
     public int[] CheckNum { get; set; }
-    public int[,] NumBoard { get; set; }
-    public string[,] StringBoard { get; set; }
+    public Card[,] CardBoard { get; set; }
 
     public Board(int  width, int height)
     {
@@ -16,10 +15,9 @@ public class Board
         Height = height;
         totalNum = Width * Height / 2 + 1;
         CheckNum = new int[totalNum];
-        NumBoard = new int[Width + 1, Height + 1];
-        StringBoard = new string[Width + 1, Height + 1];
-        SetNumBoard();
-        SetStringBoard();
+        
+        CardBoard = new Card[Width + 1, Height + 1];
+        SetBoard();
     }
 
     public int GetTotalNum()
@@ -27,29 +25,18 @@ public class Board
         return totalNum - 1;
     }
 
-    public string GetBoardState(int row, int col)
+    public string GetCardState(int row, int col)
     {
-        return StringBoard[row, col];
+        return $"{CardBoard[row, col].PrintCard()}";
     }
 
-    public void SetNumBoard()
+    public void SetBoard()
     {      
         for(int i = 1; i < Width+1; i++)
         {
             for(int j = 1; j < Height+1; j++)
             {
-                NumBoard[i, j] = InitNumber();
-            }
-        }
-    }
-
-    public void SetStringBoard()
-    {
-        for (int i = 1; i < Width + 1; i++)
-        {
-            for (int j = 1; j < Height + 1; j++)
-            {
-                StringBoard[i, j] = "**";
+                CardBoard[i, j] = new Card(InitNumber());
             }
         }
     }
@@ -85,7 +72,7 @@ public class Board
             Console.Write($"{i}행");
             for(int j =1; j < Height + 1; j++)
             {
-                Console.Write($"\t{StringBoard[i, j]}");
+                Console.Write($"\t{CardBoard[i, j].PrintCard()}");
             }
             Console.WriteLine();
         }
@@ -105,7 +92,7 @@ public class Board
             Console.Write($"{i}행");
             for (int j = 1; j < Height + 1; j++)
             {
-                Console.Write($"\t{NumBoard[i, j]}");
+                Console.Write($"\t{CardBoard[i, j].Num}");
             }
             Console.WriteLine();
         }
@@ -113,11 +100,11 @@ public class Board
 
     public void ChooseNum(int row, int col)
     {
-        StringBoard[row, col] = $"[{NumBoard[row, col].ToString()}]";
+        CardBoard[row, col].ApplyState("Open");
     }
 
     public void HideNum(int row, int col)
     {
-        StringBoard[row, col] = "**";
+        CardBoard[row, col].ApplyState("Unknown");
     }
 }
