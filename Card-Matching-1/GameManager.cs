@@ -11,8 +11,6 @@ public class GameManager
 
     public GameManager()
     {
-        Console.WriteLine("======= 카드 짝 맞추기 게임 ========");
-        Console.WriteLine();
         _tryNum = 0;
         _findPair = 0;
         SelectLevel();
@@ -48,6 +46,49 @@ public class GameManager
                 {
                     _previewTime = 2;
                     _board = new Board(4, 6);
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("1, 2, 3 중 하나를 입력하세요.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("1, 2, 3 중 하나를 입력하세요.");
+            }
+        }
+    }
+
+    public void SelectSkin()
+    {
+        Console.Clear();
+        Console.WriteLine("======= 카드 짝 맞추기 게임 ========");
+        Console.WriteLine();
+        Console.WriteLine("카드 스킨을 선택하세요:");
+        Console.WriteLine("1. 숫자 (기본)");
+        Console.WriteLine("2. 알파벳 (컬러)");
+        Console.WriteLine("3. 기호 (컬러)");
+        while (true)
+        {
+            Console.Write("선택: ");
+            string input = Console.ReadLine();
+
+            if (int.TryParse(input, out int skin))
+            {
+                if (skin == 1)
+                {
+                    Card._cardSkin = new NumberSkin();
+                    break;
+                }
+                else if (skin == 2)
+                {
+                    Card._cardSkin = new AlphabetSkin();
+                    break;
+                }
+                else if (skin == 3)
+                {
+                    Card._cardSkin = new SymbolSkin();
                     break;
                 }
                 else
@@ -111,42 +152,48 @@ public class GameManager
 
     public void Query(string query, ref int row, ref int col)
     {
-        while(true)
+        while (true)
         {
             Console.Write($"{query} ");
             string q = Console.ReadLine();
             string[] num = q.Split(' ');
 
-
-            // 여기서 CardState 분기분에 따라 출력 형식 다르게 구현하기
             if (num.Length == 2 && int.TryParse(num[0], out int r) && int.TryParse(num[1], out int c))
             {
                 if (0 < r && r < _board.Width + 1 && 0 < c && c < _board.Height + 1)
                 {
-                    // 이걸 _board.CardBoard.GetCardState로 바꾸기
-                    if (_board.GetCardState(r, c) == "**")
+                    string s = _board.CardBoard[r, c].GetCardState();
+
+                    if (s == "Unknown")
                     {
                         _board.ChooseNum(r, c);
                         row = r;
                         col = c;
                         break;
                     }
+                    else if (s == "Open")
+                    {
+                        Console.WriteLine("같은 카드를 선택할 수 없습니다. 다른 카드를 선택하세요.");
+                    }
+                    else if (s == "Pair")
+                    {
+                        Console.WriteLine("이미 짝을 찾은 카드입니다. 다른 카드를 선택하세요.");
+                    }
                     else
                     {
-                        Console.WriteLine("뽑을 수 없는 행과 열입니다");
+                        Console.WriteLine($"행은 1~{_board.Width}, 열은 1~{_board.Height} 범위로 입력하세요.");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("행은 1~4, 열은 1~4 범위로 입력하세요.");
+                    Console.WriteLine($"행은 1~{_board.Width}, 열은 1~{_board.Height} 범위로 입력하세요.");
                 }
             }
             else
             {
-                Console.WriteLine("행은 1~4, 열은 1~4 범위로 입력하세요.");
+                Console.WriteLine($"행은 1~{_board.Width}, 열은 1~{_board.Height} 범위로 입력하세요.");
             }
         }
-
         Console.Clear();
         PrintInfo();
     }

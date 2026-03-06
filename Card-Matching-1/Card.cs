@@ -4,6 +4,7 @@ public struct Card
 {
     public int Num { get; set; }
     CardState cardState;
+    public static ICardSkin _cardSkin;
 
     public Card(int num)
     {
@@ -19,24 +20,31 @@ public struct Card
         }
     }
 
-    // GetCardState
-
-    public string PrintCard()
+    public string GetCardState()
     {
-        string s = "";
+        return $"{cardState}";
+    }
+
+    public void PrintCard()
+    {
         switch(cardState)
         {
             case CardState.Unknown:
-                s = "**";
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write("\t**");
+                Console.ResetColor();
                 break;
             case CardState.Open:
-                s = $"[{Num}]";
+                Console.ForegroundColor = _cardSkin.GetColor(Num);
+                Console.Write($"\t[{_cardSkin.GetDisplay(Num)}]");
+                Console.ResetColor();
                 break;
             case CardState.Pair:
-                s = $"{Num}]";
+                Console.ForegroundColor = _cardSkin.GetColor(Num);
+                Console.Write($"\t{_cardSkin.GetDisplay(Num)}");
+                Console.ResetColor();
                 break;
         }
-        return s;
     }
 }
 

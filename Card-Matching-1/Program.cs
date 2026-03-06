@@ -1,10 +1,16 @@
 using System;
 using System.Threading;
 
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
 while (true)
 {
+    Console.WriteLine("======= 카드 짝 맞추기 게임 ========");
+    Console.WriteLine();
+
     GameManager GM = new GameManager();
 
+    GM.SelectSkin();
     GM.ReadyGame();
     GM.GameStart();
 

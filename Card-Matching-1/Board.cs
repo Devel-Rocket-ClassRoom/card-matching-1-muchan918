@@ -25,11 +25,6 @@ public class Board
         return totalNum - 1;
     }
 
-    public string GetCardState(int row, int col)
-    {
-        return $"{CardBoard[row, col].PrintCard()}";
-    }
-
     public void SetBoard()
     {      
         for(int i = 1; i < Width+1; i++)
@@ -72,7 +67,7 @@ public class Board
             Console.Write($"{i}행");
             for(int j =1; j < Height + 1; j++)
             {
-                Console.Write($"\t{CardBoard[i, j].PrintCard()}");
+                CardBoard[i, j].PrintCard();
             }
             Console.WriteLine();
         }
@@ -80,21 +75,22 @@ public class Board
 
     public void PrintAnswer()
     {
-        Console.Write("\t");
-        for (int i = 1; i < Height + 1; i++)
+        for (int i = 1; i < Width + 1; i++)
         {
-            Console.Write($"{i}열\t");
+            for (int j = 1; j < Height + 1; j++)
+            {
+                CardBoard[i, j].ApplyState("Pair");
+            }
         }
-        Console.WriteLine();
+
+        PrintBoard();
 
         for (int i = 1; i < Width + 1; i++)
         {
-            Console.Write($"{i}행");
             for (int j = 1; j < Height + 1; j++)
             {
-                Console.Write($"\t{CardBoard[i, j].Num}");
+                CardBoard[i, j].ApplyState("Unknown");
             }
-            Console.WriteLine();
         }
     }
 
