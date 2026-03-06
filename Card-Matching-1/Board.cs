@@ -91,6 +91,26 @@ public class Board
         }
     }
 
+    public void PrintAnswer()
+    {
+        Console.Write("\t");
+        for (int i = 1; i < Height + 1; i++)
+        {
+            Console.Write($"{i}열\t");
+        }
+        Console.WriteLine();
+
+        for (int i = 1; i < Width + 1; i++)
+        {
+            Console.Write($"{i}행");
+            for (int j = 1; j < Height + 1; j++)
+            {
+                Console.Write($"\t{NumBoard[i, j]}");
+            }
+            Console.WriteLine();
+        }
+    }
+
     public void ChooseNum(int row, int col)
     {
         StringBoard[row, col] = $"[{NumBoard[row, col].ToString()}]";

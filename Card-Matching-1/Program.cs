@@ -1,23 +1,34 @@
 using System;
 using System.Threading;
 
-GameManager GM = new GameManager();
+while (true)
+{
+    GameManager GM = new GameManager();
 
-Console.Clear();
-Console.WriteLine("카드를 섞는중...");
-Thread.Sleep(1000);
-Console.Clear();
+    GM.ReadyGame();
+    GM.GameStart();
 
-GM.GameStart();
+    while (true)
+    {
+        Console.Write("새 게임을 하시겠습니까? (Y/N): ");
+        string input = Console.ReadLine().ToLower();
 
-//Board board = new Board(4, 4);
-//board.PrintBoard();
-//Thread.Sleep(2000);
-//board.ChooseNum(1, 1);
-//board.PrintBoard();
-//Thread.Sleep(2000);
-//board.ChooseNum(2, 1);
-//board.PrintBoard();
-//Thread.Sleep(2000);
-//board.HideNum(1, 1);
-//board.PrintBoard();
+        if (input == "y")
+        {
+            Console.WriteLine("계속합니다.");
+            Console.Clear();
+            break;
+        }
+        else if (input == "n")
+        {
+            Console.WriteLine("종료합니다.");
+            return;
+        }
+        else
+        {
+            Console.WriteLine("잘못된 입력입니다.");
+        }
+    }
+}
+
+
