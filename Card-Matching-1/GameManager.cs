@@ -64,7 +64,6 @@ public class GameManager
 
     public void ReadyGame()
     {
-
         Console.Clear();
         Console.WriteLine("카드를 섞는중...");
         Console.WriteLine();
