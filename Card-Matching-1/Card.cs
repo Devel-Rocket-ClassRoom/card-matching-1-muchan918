@@ -19,6 +19,8 @@ public struct Card
         }
     }
 
+    // GetCardState
+
     public string PrintCard()
     {
         string s = "";

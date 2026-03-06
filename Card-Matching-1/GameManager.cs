@@ -117,10 +117,13 @@ public class GameManager
             string q = Console.ReadLine();
             string[] num = q.Split(' ');
 
+
+            // 여기서 CardState 분기분에 따라 출력 형식 다르게 구현하기
             if (num.Length == 2 && int.TryParse(num[0], out int r) && int.TryParse(num[1], out int c))
             {
                 if (0 < r && r < _board.Width + 1 && 0 < c && c < _board.Height + 1)
                 {
+                    // 이걸 _board.CardBoard.GetCardState로 바꾸기
                     if (_board.GetCardState(r, c) == "**")
                     {
                         _board.ChooseNum(r, c);
