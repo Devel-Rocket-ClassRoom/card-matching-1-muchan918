@@ -6,6 +6,8 @@ public class GameManager
     private Board _board;
     private int _findPair;
     private int _previewTime; // 미리보기 시간
+    private int _boardWidth;
+    private int _boardHeight;
     private GameBase _gameBase; // 게임 모드
 
     public GameManager()
@@ -80,21 +82,24 @@ public class GameManager
                 {
                     _gameBase.SetGameLevel(GameLevel.Easy);
                     _previewTime = 5;
-                    _board = new Board(2, 4);
+                    _boardWidth = 2;
+                    _boardHeight = 4;                   
                     break;
                 }
                 else if(level == 2)
                 {
                     _gameBase.SetGameLevel(GameLevel.Normal);
                     _previewTime = 3;
-                    _board = new Board(4, 4);
+                    _boardWidth = 4;
+                    _boardHeight = 4;
                     break;
                 }
                 else if(level == 3)
                 {
                     _gameBase.SetGameLevel(GameLevel.Hard);
                     _previewTime = 2;
-                    _board = new Board(4, 6);
+                    _boardWidth = 4;
+                    _boardHeight = 6;
                     break;
                 }
                 else
@@ -159,6 +164,7 @@ public class GameManager
     {
         Console.Clear();
         Console.WriteLine("카드를 섞는중...");
+        _board = new Board(_boardWidth, _boardHeight);
         Console.WriteLine();
         
         // 카드 정답 공개 ( _previewTime 초 만큼 )
