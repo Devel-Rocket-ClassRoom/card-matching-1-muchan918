@@ -1,5 +1,6 @@
 ﻿using System;
 
+// 기호 카드 스킨
 class SymbolSkin : ICardSkin
 {
     string[] symbols = { "★", "♠", "♥", "♦", "♣", "●", "■", "▲", "☆", "♡", "○", "□" };

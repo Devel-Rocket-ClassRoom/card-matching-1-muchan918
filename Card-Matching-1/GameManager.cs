@@ -4,20 +4,65 @@ using System.Threading;
 public class GameManager
 {
     private Board _board;
-    private int _tryNum;
     private int _findPair;
-    private int _maxTryNum;
-    private int _previewTime;
+    private int _previewTime; // 미리보기 시간
+    private GameBase _gameBase; // 게임 모드
 
     public GameManager()
     {
-        _tryNum = 0;
         _findPair = 0;
+        SelectMode();
         SelectLevel();
     }
 
+    // 게임 모드 선택
+    public void SelectMode()
+    {
+        Console.WriteLine("게임 모드를 선택하세요");
+        Console.WriteLine("1. 클래식");
+        Console.WriteLine("2. 타임어택");
+        Console.WriteLine("3. 서바이벌");
+        while (true)
+        {
+            Console.Write("선택: ");
+            string input = Console.ReadLine();
+
+            // 게임 모드에 맞는 인스턴스 할당
+            if(int.TryParse(input, out int mode))
+            {
+                if (mode == 1)
+                {
+                    _gameBase = new ClassicMode();
+                    break;
+                }
+                else if (mode == 2)
+                {
+                    _gameBase = new TimeAttackMode();
+                    break;
+                }
+                else if (mode == 3)
+                {
+                    _gameBase = new SurvivalMode();
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("1, 2, 3 중 하나를 입력하세요.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("1, 2, 3 중 하나를 입력하세요.");
+            }
+        }
+        Console.Clear();
+    }
+
+    // 난이도 선택
     public void SelectLevel()
     {
+        Console.WriteLine("======= 카드 짝 맞추기 게임 ========");
+        Console.WriteLine();
         Console.WriteLine("난이도를 선택하세요:");
         Console.WriteLine("1. 쉬움 (2x4)");
         Console.WriteLine("2. 보통 (4x4)");
@@ -27,23 +72,27 @@ public class GameManager
             Console.Write("선택: ");
             string input = Console.ReadLine();
 
+            // 1. 난이도에 따라 미리보기 시간, 보드 칸 개수가 달라진다
+            // 2. 난이도에 따라 각 게임 모드의 종료 조건이 달라진다.
             if (int.TryParse(input, out int level))
             {
-                _maxTryNum = level * 10;
                 if(level == 1)
                 {
+                    _gameBase.SetGameLevel(GameLevel.Easy);
                     _previewTime = 5;
                     _board = new Board(2, 4);
                     break;
                 }
                 else if(level == 2)
                 {
+                    _gameBase.SetGameLevel(GameLevel.Normal);
                     _previewTime = 3;
                     _board = new Board(4, 4);
                     break;
                 }
                 else if(level == 3)
                 {
+                    _gameBase.SetGameLevel(GameLevel.Hard);
                     _previewTime = 2;
                     _board = new Board(4, 6);
                     break;
@@ -60,6 +109,7 @@ public class GameManager
         }
     }
 
+    // 카드 스킨 선택하기
     public void SelectSkin()
     {
         Console.Clear();
@@ -74,6 +124,7 @@ public class GameManager
             Console.Write("선택: ");
             string input = Console.ReadLine();
 
+            // 선택에 따라 각 카드 스킨이 달라진다
             if (int.TryParse(input, out int skin))
             {
                 if (skin == 1)
@@ -103,53 +154,44 @@ public class GameManager
         }
     }
 
+    // 게임 준비
     public void ReadyGame()
     {
         Console.Clear();
         Console.WriteLine("카드를 섞는중...");
         Console.WriteLine();
+        
+        // 카드 정답 공개 ( _previewTime 초 만큼 )
         _board.PrintAnswer();
         Thread.Sleep(_previewTime*1000);
         Console.Clear();
     }
 
+    // 게임 시작
     public void GameStart()
     {
         int row1 = 0, col1 = 0, row2 = 0, col2 = 0;
+        bool isGameOver = false;
 
-        while (true)
+        // 종료 조건 전까지 루프
+        while (!isGameOver)
         {
-            PrintInfo();
+            // 게임 모드에 따라 다르게 출력
+            _gameBase.GetStatusText(_board, _findPair);
+
+            // 질문 두번으로 행과 열 정보를 참조 형식으로 받아옴
             Query("첫 번째 카드를 선택하세요 (행 열): ", ref row1, ref col1);
             Query("두 번째 카드를 선택하세요 (행 열): ", ref row2, ref col2);
+
+            // 받아온 행과 열 정보를 통해 카드 종류가 같은 지 확인
             CheckPair(row1, col1, row2, col2);
 
-            if (_tryNum == _maxTryNum)
-            {
-                PrintInfo();
-                Console.WriteLine("====== 게임 오버 ======");
-                Console.WriteLine("시도 횟수를 모두 사용했습니다");
-                Console.WriteLine($"찾은 쌍: {_findPair}/{_board.GetTotalNum()}");
-                break;
-            } 
-
-            if (_findPair == _board.GetTotalNum())
-            {
-                PrintInfo();
-                Console.WriteLine("====== 게임 클리어 ======");
-                Console.WriteLine($"총 시도 횟수: {_tryNum}");
-                break;
-            }
+            // 게임 종료 조건 판단
+            isGameOver = _gameBase.IsGameOver(_board, _findPair);
         }
     }
 
-    public void PrintInfo()
-    {
-        _board.PrintBoard();
-        Console.WriteLine($"시도 횟수: {_tryNum}/{_maxTryNum} | 찾은 쌍: {_findPair}/{_board.GetTotalNum()}");
-        Console.WriteLine();
-    }
-
+    // 행과 열 질문하는 함수
     public void Query(string query, ref int row, ref int col)
     {
         while (true)
@@ -164,6 +206,7 @@ public class GameManager
                 {
                     string s = _board.CardBoard[r, c].GetCardState();
 
+                    // Unknown 카드를 뽑을 때만 row와 col에 값 할당
                     if (s == "Unknown")
                     {
                         _board.ChooseNum(r, c);
@@ -195,25 +238,28 @@ public class GameManager
             }
         }
         Console.Clear();
-        PrintInfo();
+        _gameBase.GetStatusText(_board, _findPair);
     }
 
+    // 카드 짝이 맞는 지 체크
     public void CheckPair(int row1, int col1, int row2, int col2)
     {
         if (_board.CardBoard[row1,col1].Num == _board.CardBoard[row2, col2].Num)
         {
+            // 짝을 찾으면 Pair 상태로 변경
             Console.WriteLine("짝을 찾았습니다!");
             _board.CardBoard[row1, col1].ApplyState("Pair");
             _board.CardBoard[row2, col2].ApplyState("Pair");
-            _tryNum++;
+            _gameBase.OnSuccess(); // 게임 모드 별 짝 찾았을 때
             _findPair++;
         }
         else
         {
+            // 짝을 못찾으면 다시 Unknown 상태로 변경
             Console.WriteLine("짝이 맞지 않습니다!");
             _board.CardBoard[row1, col1].ApplyState("Unknown");
             _board.CardBoard[row2, col2].ApplyState("Unknown");
-            _tryNum++;
+            _gameBase.OnFail(); // 게임 모드 별 짝 못 찾았을 때
         }
         Thread.Sleep(1500);
         Console.Clear();

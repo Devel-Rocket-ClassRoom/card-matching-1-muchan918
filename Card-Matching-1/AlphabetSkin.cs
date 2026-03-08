@@ -1,5 +1,6 @@
 ﻿using System;
 
+// 알파벳 카드 스킨
 class AlphabetSkin : ICardSkin
 {
     ConsoleColor[] colors =
